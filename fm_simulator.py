@@ -3,7 +3,7 @@ import csv
 
 
 def RollCrit(Rate):
-    CritRoll = random.random() * 100
+    CritRoll = random.random() 
     if CritRoll < Rate:
         Crit = 1
     else:
@@ -68,7 +68,7 @@ def Impact(AP): # Calculated for use on 5 ember stacks only
     dmg = (AP * 2.5) * 2.5
     return dmg
 
-def DragonBlaze(AP, BurnTimer):
+def Dragonblaze(AP, BurnTimer):
     dmg = AP * 9.0
     if BurnTimer > 0:
         dmg = dmg + (AP * 2.0)
@@ -167,6 +167,7 @@ def main():
                     if FrostOrbits < 3:
                         FrostOrbits = FrostOrbits + 1
                     FrostOrbitTimer = 30
+            #print("RMB: ", RMBdmg)
 
 
         # Process LMB for current second using IF
@@ -204,7 +205,10 @@ def main():
                     if FireOrbits < 3:
                         FireOrbits = FireOrbits + 1
                     FireOrbitTimer = 30
-                    EmberStacks = EmberStacks + 1
+                    if EmberStacks < 5:
+                        EmberStacks = EmberStacks + 1
+                    else:
+                        Emberstacks = 5
                 if EmberStacks == 5:
                     EmberStacks = 0
                 if EmberStacks < 5:
@@ -226,7 +230,7 @@ def main():
                 else:
                     Emberstacks = 5
             else:
-                LMBdmg = LMBT3S2(AP, BurnTimer) #call fucntion
+                LMBdmg = LMBT5S2(AP, BurnTimer) #call fucntion
                 Critical = RollCrit(CritRate) #Roll for crit
                 if Critical==1:
                     LMBdmg = LMBdmg * CritDmg # If a crit, multiply damage
@@ -239,6 +243,7 @@ def main():
                     EmberStacks = EmberStacks + 1
                 else:
                     Emberstacks = 5
+            #print("  LMB: ", LMBdmg)
 
 
 
@@ -254,6 +259,7 @@ def main():
                     if FireOrbits < 3:
                         FireOrbits = FireOrbits + 1
                     FireOrbitTimer = 30
+                    #print("  Short Fuse: ", CdDamage)
                 elif InfernoCD <= 0:
                     CdDamage = Inferno(AP, EmberStacks) # call function to calculate damage
                     Critical = RollCrit(CritRate) #Roll for crit
@@ -261,6 +267,7 @@ def main():
                         CdDamage = CdDamage * CritDmg # If a crit, multiply damage
                     BurnTimer = 6 # Reset Burn Timer
                     InfernoCD = 45 # Reset Cooldown
+                    #print("  Inferno: ", CdDamage)
                 elif EmberStacks == 5:
                     CdDamage = Impact(AP) # call function to calculate damage
                     Critical = RollCrit(CritRate) # Roll for crit
@@ -268,6 +275,7 @@ def main():
                         CdDamage = CdDamage * CritDmg # If a crit, multiply damage
                     BurnTimer = 6 # Reset Burn Timer
                     EmberStacks = 0 # Blow up ember stacks
+                    #print("  Impact: ", CdDamage)
                 elif FireOrbits == 3:
                     CdDamage = Dragonblaze(AP, BurnTimer)
                     Critical = RollCrit(CritRate) # Roll for crit
@@ -276,6 +284,7 @@ def main():
                     FireOrbits = 0
                     FireOrbitTimer = 0
                     MeteorCD = MeteorCD - 3
+                    #print("  Dragonblaze: ", CdDamage)
                 elif FireOrbits < 3 and LMB > 3 and FrostOrbits == 3:
                     CdDamage = FireFury(AP, BurnTimer)
                     Critical = RollCrit(CritRate) # Roll for crit
@@ -286,6 +295,7 @@ def main():
                         EmberStacks = EmberStacks + 3
                     else:
                         Emberstacks = 5
+                    #print("  Fire Fury: ", CdDamage)
                 else:
                     CdDamage = BlazingBeam(AP, BurnTimer)
                     Critical = RollCrit(CritRate) # Roll for crit
@@ -295,6 +305,7 @@ def main():
                         EmberStacks = EmberStacks + 1
                     else:
                         Emberstacks = 5
+                    #print("  Blazing Beam: ", CdDamage)
             else:
                 if MeteorCD <= 0:
                     CdDamage = Meteor(AP, BurnTimer)
@@ -302,6 +313,8 @@ def main():
                     if Critical==1:
                         CdDamage = CdDamage * CritDmg # If a crit, multiply damage
                     EmberStacks = 5
+                    MeteorCD = 45
+                    #print("  Meteor Storm: ", CdDamage)
                 elif FireOrbits < 3 and LMB > 3 and FrostOrbits == 3:
                     CdDamage = FireFury(AP, BurnTimer)
                     Critical = RollCrit(CritRate) # Roll for crit
@@ -312,14 +325,17 @@ def main():
                         EmberStacks = EmberStacks + 3
                     else:
                         Emberstacks = 5
+                    #print("  Fire Fury: ", CdDamage)
                 elif FireOrbits == 3 and FrostOrbits == 3:
                     CdDamage = DualDragons(AP)
                     Critical = RollCrit(CritRate) # Roll for crit
                     if Critical==1:
                         CdDamage = CdDamage * CritDmg # If a crit, multiply damage
                     EmberStacks = 5
-                    Fireorbits = 0
+                    FireOrbits = 0
                     FrostOrbits = 0
+                    DualDragonsCD = 18
+                    #print("  Dual Dragons: ", CdDamage)
                 elif FireOrbits == 3:
                     CdDamage = Dragonblaze(AP, BurnTimer)
                     Critical = RollCrit(CritRate) # Roll for crit
@@ -328,6 +344,7 @@ def main():
                     FireOrbits = 0
                     FireOrbitTimer = 0
                     MeteorCD = MeteorCD - 3
+                    #print("  Dragonblaze: ", CdDamage)
                 else:
                     CdDamage = BlazingBeam(AP, BurnTimer)
                     Critical = RollCrit(CritRate) # Roll for crit
@@ -337,7 +354,9 @@ def main():
                         EmberStacks = EmberStacks + 1
                     else:
                         Emberstacks = 5
-        
+                    #print("  Blazing Beam: ", CdDamage)
+            
+            #print("  Burn Timer: ", BurnTimer, "  Fire Orbits: ", FireOrbits, "  Frost Orbits: ", FrostOrbits, "\n") 
             BurnTimer = BurnTimer - 1
             FireOrbitTimer = FireOrbitTimer - 1
             if FireOrbitTimer <= 0:
@@ -349,12 +368,13 @@ def main():
             ShortFuseCD = ShortFuseCD - 1
             MeteorCD = MeteorCD - 1
             DualDragonsCD = DualDragonsCD -1
+            
             TotalDamage = TotalDamage + LMBdmg + RMBdmg + CdDamage
 
-        print("Your total elapsed time is ", Minutes, " minutes.")
+        #print("Your total elapsed time is ", Minutes, " minutes.")
         DPS = TotalDamage / (Minutes * 60)
-        print("Your total damage dealt was: ", TotalDamage)
-        print("Your average DPS was: ", DPS)
+        #print("Your total damage dealt was: ", TotalDamage)
+        #print("Your average DPS was: ", DPS)
         output_file = open('SimResults.csv', 'a', newline='') # code to write output to a cs file for convenience
         data = csv.writer(output_file)
         data.writerow([LMB, RMB, AP, CritRateStep, CritDmg, Minutes, TotalDamage, DPS])
